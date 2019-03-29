@@ -31,10 +31,10 @@ class GUI(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def get_url(self):
         self.default()
         self.url = self.lineEdit.text()
-        if 'www.twitch.tv/videos/' not in self.url and 'clips.twitch.tv/' not in self.url:
+        if 'www.twitch.tv/videos/' not in self.url and 'https://www.twitch.tv' not in self.url:
             QtWidgets.QMessageBox.about(self, "Внимание", "Неверный формат ссылки, проверьте правильность ссылки")
             return
-        TwitchGrabler.video_id = self.url.rsplit('/', 1)[1]
+        TwitchGrabler.video_id = self.url.rsplit('/', 1)[1].split('?', 1)[0]
         TwitchGrabler.info(TwitchGrabler, self.url)
         self.comboBox.addItems(TwitchGrabler.resolutions)
         TwitchGrabler.resolution = TwitchGrabler.resolutions[0]
@@ -96,7 +96,7 @@ class TwitchGrabler(QtCore.QThread):
             '\\', '')[:-2]
 
     def info(self, url):
-        if 'https://clips.twitch.tv/' in url:
+        if '/clip/' in url:
             get_info = 'https://clips.twitch.tv/api/v2/clips/' + self.video_id + '/status'
             info = urllib.request.Request(get_info, headers={
                 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0',
@@ -190,3 +190,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
